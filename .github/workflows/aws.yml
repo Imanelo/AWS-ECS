@@ -28,7 +28,7 @@ jobs:
       # Step 3: Log in to Amazon ECR
       - name: Log in to Amazon ECR
         run: |
-          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin <AWS_ACCOUNT_ID>.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin <474668406552.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
       # Step 4: Build the Docker image
       - name: Build Docker image
@@ -43,4 +43,4 @@ jobs:
       # Step 6: Push the Docker image to ECR
       - name: Push Docker image to Amazon ECR
         run: |
-          docker push <AWS_ACCOUNT_ID>.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY_NAME }}:latest
+          docker push 474668406552.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY_NAME }}:latest
