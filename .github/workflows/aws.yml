@@ -50,7 +50,3 @@ jobs:
 
           # Push the uniquely tagged image
           docker push "${IMAGE_URI}:${UNIQUE_TAG}"
-
-      # Step 5: Output the Image URI
-      - name: Output the Image URI
-        run: echo "Image pushed to: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.REPO_NAME }}:${UNIQUE_TAG}"
