@@ -38,7 +38,7 @@ jobs:
       # Step 5: Tag the Docker image
       - name: Tag Docker image
         run: |
-          docker tag ${{ secrets.ECR_REPOSITORY_NAME }}:latest <AWS_ACCOUNT_ID>.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY_NAME }}:latest
+          docker tag ${{ secrets.ECR_REPOSITORY_NAME }}:latest 474668406552.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY_NAME }}:latest
 
       # Step 6: Push the Docker image to ECR
       - name: Push Docker image to Amazon ECR
