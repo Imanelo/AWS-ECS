@@ -28,19 +28,29 @@ jobs:
       # Step 3: Log in to Amazon ECR
       - name: Log in to Amazon ECR
         run: |
-          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin 474668406552.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
-      # Step 4: Build the Docker image
-      - name: Build Docker image
+      # Step 4: Build, tag, and push Docker image
+      - name: Build, tag, and push Docker image
+        env:
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          REPO_NAME: ${{ secrets.ECR_REPOSITORY_NAME }}
         run: |
-          docker build -t ${{ secrets.ECR_REPOSITORY_NAME }} .
+          # Extract GitHub metadata
+          COMMIT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
+          IMAGE_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${REPO_NAME}"
 
-      # Step 5: Tag the Docker image
-      - name: Tag Docker image
-        run: |
-          docker tag ${{ secrets.ECR_REPOSITORY_NAME }}:latest 474668406552.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY_NAME }}:latest
+          # Tagging strategy: version + commit SHA 
+          VERSION_TAG="v1.0.0"  # Replace with your release version
+          UNIQUE_TAG="${VERSION_TAG}-${COMMIT_SHA}"
 
-      # Step 6: Push the Docker image to ECR
-      - name: Push Docker image to Amazon ECR
-        run: |
-          docker push 474668406552.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY_NAME }}:latest
+          # Build Docker image
+          docker build -t "${IMAGE_URI}:${UNIQUE_TAG}" .
+
+          # Push the uniquely tagged image
+          docker push "${IMAGE_URI}:${UNIQUE_TAG}"
+
+      # Step 5: Output the Image URI
+      - name: Output the Image URI
+        run: echo "Image pushed to: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.REPO_NAME }}:${{ UNIQUE_TAG }}"
